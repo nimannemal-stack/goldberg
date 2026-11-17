@@ -2,8 +2,24 @@ import discord
 import requests
 import json
 import os
+from flask import Flask
+from threading import Thread
 
-# يتم جلب المفاتيح من إعدادات الأمان في الاستضافة (Render) لحماية حسابك
+# سيرفر وهمي صغير عشان Render يقبل البوت كـ Web Service مجاني
+app = Flask('')
+
+@app.route('/')
+def home():
+    return "Joe Goldberg is watching."
+
+def run():
+    app.run(host='0.0.0.0', port=8080)
+
+def keep_alive():
+    t = Thread(target=run)
+    t.start()
+
+# مفاتيح الأمان من إعدادات Render
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 GROQ_API_KEY = os.getenv("GROQ_API_KEY")
 
@@ -86,4 +102,5 @@ async def on_message(message):
             except Exception as e:
                 print(f"Error details: {e}")
 
+keep_alive()
 client.run(DISCORD_TOKEN)
